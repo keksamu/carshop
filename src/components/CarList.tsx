@@ -10,12 +10,12 @@ export default function CarList() {
     const [cars, setCars] = useState<Tcar[]>([]);
 
     const columns: GridColDef[] = [
-  { field: 'brand' },
-  { field: 'color' },
-  { field: 'fuel' },
-  { field: 'model' },
-  { field: 'modelYear' },
-  { field: 'price' },
+  { field: 'brand', headerName: 'Brand' },
+  { field: 'color', headerName: 'Color' },
+  { field: 'fuel', headerName: 'Fuel' },
+  { field: 'model', headerName: 'Model' },
+  { field: 'modelYear', headerName: 'Year' },
+  { field: 'price', headerName: 'Price' },
   { field: 'actions', 
     type: 'actions',
     width: 150,
@@ -97,4 +97,3 @@ const handleAdd = async (newCar: Tcar) => {
         </div>
     )
 }
-
