@@ -3,6 +3,7 @@ import type { GridColDef, GridRowParams } from '@mui/x-data-grid';
 import { DataGrid } from '@mui/x-data-grid';
 import Button from "@mui/material/Button";
 import AddCar from "./AddCar";
+import EditCar from "./EditCar";
 
 import type { Tcar } from "../Types";
 
@@ -20,24 +21,23 @@ export default function CarList() {
     type: 'actions',
     width: 150,
     getActions: (params: GridRowParams) => [
-        <Button size="small">Edit</Button>,
+        <EditCar car={params.row} handleEdit={handleEdit} url={params.id as string} />,
         <Button size="small" color="error" onClick={() => { handleDelete(params.id as string)}}>DELETE</Button>
     ]
   },
 ]
 
-
-    const getCars = async () => {
-        try {
-        const response = await fetch('https://car-rest-service-carshop.2.rahtiapp.fi/cars');
-        if (!response.ok) {
-            throw new Error(`Failed to fetch cars: ${response.statusText}`);
-        }
-        const data = await response.json();
-        setCars(data._embedded.cars);
-    } catch (err) {
-        console.log(err);
+const getCars = async () => {
+    try {
+    const response = await fetch('https://car-rest-service-carshop.2.rahtiapp.fi/cars');
+    if (!response.ok) {
+        throw new Error(`Failed to fetch cars: ${response.statusText}`);
     }
+    const data = await response.json();
+    setCars(data._embedded.cars);
+} catch (err) {
+    console.log(err);
+}
 }
 
  const handleDelete = async (url: string) => {
@@ -56,6 +56,26 @@ export default function CarList() {
     }
 }
 
+const handleEdit = async (url: string, updatedCar: Tcar) => {
+    try {
+        const options = {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedCar)
+        }
+
+        const response = await fetch(url, options);
+        if (!response.ok) {
+            throw new Error(`Failed to edit car: ${response.statusText}`);
+        }
+        getCars();
+    } catch (err) {
+        console.log(err);
+    }
+}
+
 const handleAdd = async (newCar: Tcar) => {
     try {
         const options = {
@@ -67,22 +87,16 @@ const handleAdd = async (newCar: Tcar) => {
         }
 
         const response = await fetch('https://car-rest-service-carshop.2.rahtiapp.fi/cars', options);
-                if (!response.ok) {
+        if (!response.ok) {
             throw new Error(`Failed to add car: ${response.statusText}`);
         }
         getCars();
-
-
     } catch (err) {        
         console.log(err);
-
-}
-
+    }
 }
 
     useEffect(() => { getCars(); }, []);
-
-
 
     return (
         <div style={{ width: '90%', margin: '20px auto 0' }}>
